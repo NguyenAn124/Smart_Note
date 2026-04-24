@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#212121</color>
+    <color name="white">#FFFFFF</color>
+    <color name="background">#FFFFFF</color>
+    <color name="primary">#6200EE</color>
+    <color name="primary_variant">#3700B3</color>
+    <color name="secondary">#03DAC6</color>
+    
+    <!-- Note Colors from Mockup - Made more vibrant for better visibility -->
+    <color name="note_yellow">#FFF9C4</color>
+    <color name="note_green">#C8E6C9</color>
+    <color name="note_purple">#E1BEE7</color>
+    <color name="note_blue">#BBDEFB</color>
+    <color name="note_pink">#F8BBD0</color>
+    <color name="note_orange">#FFE0B2</color>
+
+    <!-- UI Colors - Increased contrast -->
+    <color name="text_primary">#000000</color>
+    <color name="text_secondary">#5F6368</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="accent_purple">#8E24AA</color>
+    <color name="search_bg">#F1F3F4</color>
+</resources>
