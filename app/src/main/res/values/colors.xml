@@ -2,23 +2,25 @@
 <resources>
     <color name="black">#212121</color>
     <color name="white">#FFFFFF</color>
-    <color name="background">#FFFFFF</color>
-    <color name="primary">#6200EE</color>
-    <color name="primary_variant">#3700B3</color>
+    <color name="background">#F8F9FA</color>
+    
+    <!-- Theme Colors -->
+    <color name="primary">#8E24AA</color>
+    <color name="primary_variant">#5E35B1</color>
     <color name="secondary">#03DAC6</color>
     
-    <!-- Note Colors from Mockup - Made more vibrant for better visibility -->
+    <!-- Màu ghi chú Pastel từ thiết kế -->
     <color name="note_yellow">#FFF9C4</color>
-    <color name="note_green">#C8E6C9</color>
-    <color name="note_purple">#E1BEE7</color>
-    <color name="note_blue">#BBDEFB</color>
-    <color name="note_pink">#F8BBD0</color>
+    <color name="note_green">#E8F5E9</color>
+    <color name="note_purple">#F3E5F5</color>
+    <color name="note_blue">#E3F2FD</color>
+    <color name="note_pink">#FCE4EC</color>
     <color name="note_orange">#FFE0B2</color>
+    <color name="note_default">#FFFFFF</color>
 
-    <!-- UI Colors - Increased contrast -->
-    <color name="text_primary">#000000</color>
+    <!-- UI Colors -->
+    <color name="text_primary">#202124</color>
     <color name="text_secondary">#5F6368</color>
-    <color name="divider">#E0E0E0</color>
     <color name="accent_purple">#8E24AA</color>
-    <color name="search_bg">#F1F3F4</color>
+    <color name="divider">#E0E0E0</color>
 </resources>
