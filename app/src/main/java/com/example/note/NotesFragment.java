@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 
@@ -24,6 +26,7 @@ public class NotesFragment extends Fragment {
     private NoteAdapter adapter;
     private FirebaseHelper firebaseHelper;
     private ProgressBar pbLoading;
+    private ImageView ivSearch;
 
     @Nullable
     @Override
@@ -32,6 +35,7 @@ public class NotesFragment extends Fragment {
 
         rvNotes = view.findViewById(R.id.rv_notes);
         pbLoading = view.findViewById(R.id.pb_loading);
+        ivSearch = view.findViewById(R.id.iv_search);
         
         firebaseHelper = new FirebaseHelper();
         adapter = new NoteAdapter();
@@ -40,6 +44,14 @@ public class NotesFragment extends Fragment {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rvNotes.setLayoutManager(layoutManager);
         rvNotes.setAdapter(adapter);
+
+        ivSearch.setOnClickListener(v -> {
+            // Chuyển sang fragment tìm kiếm/danh mục
+            if (getActivity() != null) {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
+                bottomNav.setSelectedItemId(R.id.nav_categories);
+            }
+        });
 
         loadNotes();
 
@@ -63,6 +75,7 @@ public class NotesFragment extends Fragment {
                 for (DocumentSnapshot doc : value.getDocuments()) {
                     Note note = doc.toObject(Note.class);
                     if (note != null) {
+                        note.setNoteId(doc.getId()); // Đảm bảo ID được set
                         if (note.isPinned()) {
                             pinnedNotes.add(note);
                         } else {
