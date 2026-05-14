@@ -91,7 +91,7 @@ public class EditNoteActivity extends AppCompatActivity {
             }
             ivDelete.setVisibility(View.VISIBLE);
         } else {
-            noteId = firebaseHelper.generateId();
+            noteId = firebaseHelper.generateNoteId();
             ivDelete.setVisibility(View.GONE);
         }
 
