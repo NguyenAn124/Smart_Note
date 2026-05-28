@@ -48,10 +48,34 @@ public class StatsFragment extends Fragment {
 
         firebaseHelper = new FirebaseHelper();
 
+        setupDefaultDates();
         setupDatePickers();
         loadData();
 
         return view;
+    }
+
+    private void setupDefaultDates() {
+        Calendar calendar = Calendar.getInstance();
+        
+        // Ngày đầu tháng hiện tại
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        startDate = calendar.getTime();
+        
+        // Ngày cuối tháng hiện tại
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        endDate = calendar.getTime();
+
+        tvStartDate.setText(sdf.format(startDate));
+        tvEndDate.setText(sdf.format(endDate));
     }
 
     private void setupDatePickers() {
@@ -60,9 +84,10 @@ public class StatsFragment extends Fragment {
             if (startDate != null) calendar.setTime(startDate);
             new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth, 0, 0, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
                 startDate = calendar.getTime();
                 tvStartDate.setText(sdf.format(startDate));
-                updateRangeStats();
+                updateStatsByRange();
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
         });
 
@@ -71,9 +96,10 @@ public class StatsFragment extends Fragment {
             if (endDate != null) calendar.setTime(endDate);
             new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth, 23, 59, 59);
+                calendar.set(Calendar.MILLISECOND, 999);
                 endDate = calendar.getTime();
                 tvEndDate.setText(sdf.format(endDate));
-                updateRangeStats();
+                updateStatsByRange();
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
         });
     }
@@ -84,38 +110,45 @@ public class StatsFragment extends Fragment {
             if (value != null && isAdded()) {
                 allNotes.clear();
                 int pinnedCount = 0;
-                Map<String, Integer> categoryMap = new HashMap<>();
 
                 for (DocumentSnapshot doc : value.getDocuments()) {
                     Note note = doc.toObject(Note.class);
                     if (note != null) {
+                        note.setNoteId(doc.getId());
                         allNotes.add(note);
                         if (note.isPinned()) pinnedCount++;
-                        
-                        String cat = note.getCategory() != null ? note.getCategory() : "Chưa phân loại";
-                        categoryMap.put(cat, categoryMap.getOrDefault(cat, 0) + 1);
                     }
                 }
 
                 tvTotalNotes.setText(String.valueOf(allNotes.size()));
                 tvPinnedNotes.setText(String.valueOf(pinnedCount));
-                updateRangeStats();
-                setupPieChart(categoryMap);
+                updateStatsByRange();
             }
         });
     }
 
-    private void updateRangeStats() {
+    private void updateStatsByRange() {
         if (startDate == null || endDate == null) return;
-        int count = 0;
+        
+        int rangeCount = 0;
+        Map<String, Integer> categoryMap = new HashMap<>();
+
+        long startMillis = startDate.getTime();
+        long endMillis = endDate.getTime();
+
         for (Note note : allNotes) {
             if (note.getTimestamp() != null) {
-                if (note.getTimestamp().after(startDate) && note.getTimestamp().before(endDate)) {
-                    count++;
+                long noteTime = note.getTimestamp().getTime();
+                if (noteTime >= startMillis && noteTime <= endMillis) {
+                    rangeCount++;
+                    String cat = note.getCategory() != null ? note.getCategory() : "Chưa phân loại";
+                    categoryMap.put(cat, categoryMap.getOrDefault(cat, 0) + 1);
                 }
             }
         }
-        tvRangeCount.setText("Số ghi chú trong kỳ: " + count);
+        
+        tvRangeCount.setText("Số ghi chú trong kỳ: " + rangeCount);
+        setupPieChart(categoryMap);
     }
 
     private void setupPieChart(Map<String, Integer> categoryMap) {
@@ -127,7 +160,7 @@ public class StatsFragment extends Fragment {
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         dataSet.setValueTextColor(Color.BLACK);
-        dataSet.setValueTextSize(12f); // Sửa từ 12sp thành 12f
+        dataSet.setValueTextSize(12f);
 
         PieData data = new PieData(dataSet);
         pieChart.setData(data);

@@ -1,46 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
-    android:gravity="center">
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="@color/white">
 
     <TextView
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ĐĂNG NHẬP SMART NOTE"
-        android:textSize="24sp"
+        android:text="ĐĂNG NHẬP"
+        android:textColor="@color/accent_purple"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:layout_marginBottom="30dp"/>
+        android:layout_marginBottom="40dp"/>
 
-    <EditText
-        android:id="@+id/etEmail"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="10dp"/>
+        app:boxBackgroundColor="@color/white"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <EditText
-        android:id="@+id/etPassword"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:importantForAutofill="no"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:hint="Mật khẩu"
-        android:inputType="textPassword"
-        android:layout_marginBottom="20dp"/>
+        app:passwordToggleEnabled="true"
+        app:boxBackgroundColor="@color/white"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:importantForAutofill="no"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:hint="Xác nhận mật khẩu"
+        android:visibility="gone"
+        app:passwordToggleEnabled="true"
+        app:boxBackgroundColor="@color/white"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:importantForAutofill="no"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnAction"
         android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Đăng nhập"
+        android:textStyle="bold"
+        android:backgroundTint="@color/accent_purple"
+        android:textColor="@color/white"
+        app:cornerRadius="8dp"
+        android:elevation="4dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Đăng nhập / Đăng ký nhanh"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+        <TextView
+            android:id="@+id/tvToggleHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nếu bạn chưa có tài khoản? "
+            android:textColor="@color/text_secondary"/>
+        <TextView
+            android:id="@+id/tvToggleAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đăng ký ngay"
+            android:textColor="@color/accent_purple"
+            android:textStyle="bold"
+            android:padding="4dp"/>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="20dp"
+        android:indeterminateTint="@color/accent_purple"/>
 
 </LinearLayout>

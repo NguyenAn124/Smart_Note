@@ -1,157 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/background">
 
-    <LinearLayout
+    <!-- Header -->
+    <RelativeLayout
+        android:id="@+id/header_categories"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="64dp"
+        android:background="@color/white"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Search Bar -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/iv_drawer_menu"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            app:tint="@color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/search_bg"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="12dp">
+            android:layout_centerInParent="true"
+            android:text="Danh mục"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:contentDescription="Search Icon"
-                android:src="@android:drawable/ic_menu_search"
-                app:tint="@color/black" />
+        <ImageView
+            android:id="@+id/iv_add_category"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/ic_input_add"
+            app:tint="@color/accent_purple" />
+    </RelativeLayout>
 
-            <EditText
-                android:id="@+id/et_search"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:background="@null"
-                android:hint="Tìm kiếm ghi chú..."
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:textColor="@color/black"
-                android:textColorHint="@color/text_secondary"
-                android:textSize="16sp" />
+    <!-- Danh sách danh mục -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_categories"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_categories"
+        tools:listitem="@layout/item_category" />
 
-            <ImageView
-                android:id="@+id/iv_clear_search"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:contentDescription="Clear Search"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                android:visibility="gone"
-                app:tint="@color/black" />
-
-            <TextView
-                android:id="@+id/tv_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Hủy"
-                android:textColor="@color/accent_purple"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Default View: Suggestions and Categories -->
-        <ScrollView
-            android:id="@+id/scroll_default"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="Gợi ý"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_suggest_flutter"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableStart="@android:drawable/ic_menu_search"
-                        android:drawablePadding="16dp"
-                        android:paddingVertical="14dp"
-                        android:text="Học Flutter"
-                        android:textColor="@color/black"
-                        app:drawableTint="@color/text_secondary" />
-
-                    <TextView
-                        android:id="@+id/tv_suggest_english"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableStart="@android:drawable/ic_menu_search"
-                        android:drawablePadding="16dp"
-                        android:paddingVertical="14dp"
-                        android:text="Học tiếng Anh"
-                        android:textColor="@color/black"
-                        app:drawableTint="@color/text_secondary" />
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:layout_marginBottom="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Danh mục"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:id="@+id/iv_add_category"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_alignParentEnd="true"
-                        android:contentDescription="Add Category"
-                        android:src="@android:drawable/ic_input_add"
-                        app:tint="@color/accent_purple" />
-                </RelativeLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_categories"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    tools:listitem="@layout/item_category" />
-            </LinearLayout>
-        </ScrollView>
-
-        <!-- Search Results View -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_search_results"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:layout_marginTop="16dp" />
-
-    </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,6 +33,7 @@
                 app:layout_columnWeight="1"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
                 android:layout_marginEnd="8dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -52,6 +53,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tổng ghi chú"
+                        android:textColor="@color/text_secondary"
                         android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -62,6 +64,7 @@
                 app:layout_columnWeight="1"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
                 android:layout_marginStart="8dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -81,6 +84,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Đã ghim"
+                        android:textColor="@color/text_secondary"
                         android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -92,7 +96,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -102,8 +107,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Lọc theo khoảng thời gian"
+                    android:textColor="@color/black"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="12dp" />
                 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -116,21 +122,26 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Từ ngày"
-                        android:padding="8dp"
-                        android:background="#F0F0F0" />
+                        android:padding="10dp"
+                        android:textColor="@color/black"
+                        android:gravity="center"
+                        android:background="@drawable/search_bg" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=" - "
-                        android:layout_marginHorizontal="8dp" />
+                        android:text=" đến "
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginHorizontal="4dp" />
                     <TextView
                         android:id="@+id/tv_end_date"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Đến ngày"
-                        android:padding="8dp"
-                        android:background="#F0F0F0" />
+                        android:padding="10dp"
+                        android:textColor="@color/black"
+                        android:gravity="center"
+                        android:background="@drawable/search_bg" />
                 </LinearLayout>
                 
                 <TextView
@@ -139,7 +150,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="Số ghi chú trong kỳ: 0"
-                    android:textColor="@color/black" />
+                    android:textStyle="italic"
+                    android:textColor="@color/accent_purple" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -149,7 +161,8 @@
             android:layout_height="350dp"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -159,6 +172,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phân bổ theo danh mục"
+                    android:textColor="@color/black"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
                 <com.github.mikephil.charting.charts.PieChart

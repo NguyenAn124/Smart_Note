@@ -2,40 +2,37 @@ package com.example.note;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SearchFragment extends Fragment implements CategoryAdapter.OnCategoryClickListener {
 
-    private RecyclerView rvCategories, rvSearchResults;
+    private RecyclerView rvCategories;
     private CategoryAdapter categoryAdapter;
-    private NoteAdapter noteAdapter;
-    private List<Category> categoryList;
-    private List<Note> allNotesList;
+    private List<Category> firebaseCategories = new ArrayList<>();
+    private Map<String, Integer> noteCounts = new HashMap<>(); 
+    private Map<String, String> displayNames = new HashMap<>(); 
     private FirebaseHelper firebaseHelper;
-    private ImageView ivAddCategory, ivClearSearch;
-    private EditText etSearch;
-    private View scrollDefault;
-    private TextView tvCancel;
+    private ImageView ivAddCategory, ivDrawerMenu;
+
+    private final String[] DEFAULT_CATEGORIES = {"Công việc", "Học tập", "Cá nhân", "Ý tưởng"};
+    private ListenerRegistration catListener, noteListener;
 
     @Nullable
     @Override
@@ -44,117 +41,100 @@ public class SearchFragment extends Fragment implements CategoryAdapter.OnCatego
 
         firebaseHelper = new FirebaseHelper();
         rvCategories = view.findViewById(R.id.rv_categories);
-        rvSearchResults = view.findViewById(R.id.rv_search_results);
         ivAddCategory = view.findViewById(R.id.iv_add_category);
-        ivClearSearch = view.findViewById(R.id.iv_clear_search);
-        etSearch = view.findViewById(R.id.et_search);
-        scrollDefault = view.findViewById(R.id.scroll_default);
-        tvCancel = view.findViewById(R.id.tv_cancel);
+        ivDrawerMenu = view.findViewById(R.id.iv_drawer_menu);
 
-        setupCategories();
-        setupSearchResults();
-        setupSearchLogic();
+        categoryAdapter = new CategoryAdapter(new ArrayList<>(), this);
+        rvCategories.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvCategories.setAdapter(categoryAdapter);
 
-        loadCategories();
-        loadAllNotesForSearch();
+        ivAddCategory.setOnClickListener(v -> showCategoryDialog(null));
+        ivDrawerMenu.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).openDrawer();
+            }
+        });
 
+        loadData();
         return view;
     }
 
-    private void setupCategories() {
-        categoryList = new ArrayList<>();
-        categoryAdapter = new CategoryAdapter(categoryList, this);
-        rvCategories.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvCategories.setAdapter(categoryAdapter);
-        ivAddCategory.setOnClickListener(v -> showCategoryDialog(null));
-    }
+    private void loadData() {
+        if (firebaseHelper.getCurrentUserId() == null) return;
 
-    private void setupSearchResults() {
-        allNotesList = new ArrayList<>();
-        noteAdapter = new NoteAdapter();
-        // Hiển thị kết quả tìm kiếm dạng lưới 2 cột giống trang chính
-        rvSearchResults.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        rvSearchResults.setAdapter(noteAdapter);
-    }
-
-    private void setupSearchLogic() {
-        etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = s.toString().toLowerCase().trim();
-                if (query.isEmpty()) {
-                    showDefaultView();
-                } else {
-                    performSearch(query);
+        // Lấy danh mục chính thức từ Firestore
+        catListener = firebaseHelper.getCategoriesQuery().addSnapshotListener((value, error) -> {
+            if (value != null && isAdded()) {
+                firebaseCategories.clear();
+                for (DocumentSnapshot doc : value.getDocuments()) {
+                    Category cat = doc.toObject(Category.class);
+                    if (cat != null) {
+                        cat.setId(doc.getId());
+                        firebaseCategories.add(cat);
+                    }
                 }
+                combineAndDisplay();
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
         });
 
-        ivClearSearch.setOnClickListener(v -> etSearch.setText(""));
-        
-        tvCancel.setOnClickListener(v -> {
-            etSearch.setText("");
-            // Có thể quay lại màn hình chính nếu cần
+        // Lấy tất cả ghi chú để đếm số lượng (Quét cả các danh mục "ẩn" trong ghi chú)
+        noteListener = firebaseHelper.getNotesQuery().addSnapshotListener((value, error) -> {
+            if (value != null && isAdded()) {
+                noteCounts.clear();
+                displayNames.clear();
+                for (DocumentSnapshot doc : value.getDocuments()) {
+                    String catName = doc.getString("category");
+                    if (catName != null && !catName.isEmpty()) {
+                        String trimmed = catName.trim();
+                        String lower = trimmed.toLowerCase();
+                        noteCounts.put(lower, noteCounts.getOrDefault(lower, 0) + 1);
+                        if (!displayNames.containsKey(lower)) {
+                            displayNames.put(lower, trimmed);
+                        }
+                    }
+                }
+                combineAndDisplay();
+            }
         });
     }
 
-    private void showDefaultView() {
-        scrollDefault.setVisibility(View.VISIBLE);
-        rvSearchResults.setVisibility(View.GONE);
-        ivClearSearch.setVisibility(View.GONE);
-    }
+    private void combineAndDisplay() {
+        if (!isAdded()) return;
 
-    private void performSearch(String query) {
-        scrollDefault.setVisibility(View.GONE);
-        rvSearchResults.setVisibility(View.VISIBLE);
-        ivClearSearch.setVisibility(View.VISIBLE);
+        Map<String, Category> finalMap = new HashMap<>();
 
-        List<Note> filteredNotes = new ArrayList<>();
-        for (Note note : allNotesList) {
-            if (note.getTitle().toLowerCase().contains(query) || 
-                note.getContent().toLowerCase().contains(query)) {
-                filteredNotes.add(note);
+        // 1. Nạp danh mục mặc định
+        for (String name : DEFAULT_CATEGORIES) {
+            String lower = name.toLowerCase();
+            Category c = new Category("", name, "");
+            c.setCount(noteCounts.getOrDefault(lower, 0));
+            finalMap.put(lower, c);
+        }
+
+        // 2. Nạp danh mục người dùng đã tạo (Firebase)
+        for (Category fc : firebaseCategories) {
+            String lower = fc.getName().toLowerCase();
+            if (finalMap.containsKey(lower)) {
+                // Nếu trùng tên mặc định, ta cập nhật ID để có thể quản lý
+                finalMap.get(lower).setId(fc.getId());
+            } else {
+                fc.setCount(noteCounts.getOrDefault(lower, 0));
+                finalMap.put(lower, fc);
             }
         }
-        // Hiển thị kết quả trong NoteAdapter (không phân chia ghim ở đây để đơn giản)
-        noteAdapter.setData(new ArrayList<>(), filteredNotes);
-    }
 
-    private void loadCategories() {
-        if (firebaseHelper.getCategoriesQuery() == null) return;
-        firebaseHelper.getCategoriesQuery().addSnapshotListener((value, error) -> {
-            if (error != null || value == null) return;
-            categoryList.clear();
-            for (DocumentSnapshot doc : value.getDocuments()) {
-                Category category = doc.toObject(Category.class);
-                if (category != null) {
-                    category.setId(doc.getId());
-                    categoryList.add(category);
-                }
+        // 3. Nạp các danh mục "vãng lai" (có trong ghi chú nhưng chưa lưu vào list danh mục)
+        for (String lowerKey : noteCounts.keySet()) {
+            if (!finalMap.containsKey(lowerKey)) {
+                Category extra = new Category("", displayNames.get(lowerKey), "");
+                extra.setCount(noteCounts.get(lowerKey));
+                finalMap.put(lowerKey, extra);
             }
-            categoryAdapter.updateData(categoryList);
-        });
-    }
+        }
 
-    private void loadAllNotesForSearch() {
-        if (firebaseHelper.getNotesQuery() == null) return;
-        firebaseHelper.getNotesQuery().addSnapshotListener((value, error) -> {
-            if (error != null || value == null) return;
-            allNotesList.clear();
-            for (DocumentSnapshot doc : value.getDocuments()) {
-                Note note = doc.toObject(Note.class);
-                if (note != null) {
-                    note.setNoteId(doc.getId());
-                    allNotesList.add(note);
-                }
-            }
-        });
+        List<Category> finalDisplayList = new ArrayList<>(finalMap.values());
+        Collections.sort(finalDisplayList, (c1, c2) -> c1.getName().compareToIgnoreCase(c2.getName()));
+        categoryAdapter.updateData(finalDisplayList);
     }
 
     private void showCategoryDialog(@Nullable Category category) {
@@ -182,21 +162,34 @@ public class SearchFragment extends Fragment implements CategoryAdapter.OnCatego
     }
 
     @Override
-    public void onCategoryClick(Category category) {
-        // Tự động điền tên danh mục vào ô tìm kiếm để lọc
-        etSearch.setText(category.getName());
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (catListener != null) catListener.remove();
+        if (noteListener != null) noteListener.remove();
     }
 
     @Override
-    public void onEditCategory(Category category) { showCategoryDialog(category); }
+    public void onCategoryClick(Category category) { }
+
+    @Override
+    public void onEditCategory(Category category) {
+        if (category.getId() == null || category.getId().isEmpty()) {
+            Toast.makeText(getContext(), "Danh mục hệ thống không thể sửa", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        showCategoryDialog(category);
+    }
 
     @Override
     public void onDeleteCategory(Category category) {
+        if (category.getId() == null || category.getId().isEmpty()) {
+            Toast.makeText(getContext(), "Danh mục hệ thống không thể xóa", Toast.LENGTH_SHORT).show();
+            return;
+        }
         new AlertDialog.Builder(getContext())
                 .setTitle("Xóa danh mục")
-                .setMessage("Bạn có chắc chắn muốn xóa?")
+                .setMessage("Bạn chắc chắn muốn xóa danh mục này?")
                 .setPositiveButton("Xóa", (dialog, which) -> firebaseHelper.deleteCategory(category.getId()))
-                .setNegativeButton("Hủy", null)
-                .show();
+                .setNegativeButton("Hủy", null).show();
     }
 }

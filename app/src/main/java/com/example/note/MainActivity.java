@@ -5,25 +5,41 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
+
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Xin quyền thông báo cho Android 13+
         requestNotificationPermission();
 
+        drawerLayout = findViewById(R.id.drawer_layout);
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         FloatingActionButton fabAdd = findViewById(R.id.fab_add);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        
+        Button btnLogout = findViewById(R.id.btn_logout);
+        btnLogout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
+        });
 
         // Set default fragment
         getSupportFragmentManager().beginTransaction()
@@ -55,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, EditNoteActivity.class);
             startActivity(intent);
         });
+    }
+
+    public void openDrawer() {
+        if (drawerLayout != null) {
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
     }
 
     private void requestNotificationPermission() {
