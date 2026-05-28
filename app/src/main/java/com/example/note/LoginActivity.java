@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -21,6 +22,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
     private boolean isLoginMode = true;
+
+    private TextInputLayout layoutConfirmPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
+        layoutConfirmPassword = findViewById(R.id.layoutConfirmPassword);
         btnAction = findViewById(R.id.btnAction);
         tvTitle = findViewById(R.id.tvTitle);
         tvToggleHint = findViewById(R.id.tvToggleHint);
@@ -53,13 +57,13 @@ public class LoginActivity extends AppCompatActivity {
         if (isLoginMode) {
             tvTitle.setText("ĐĂNG NHẬP");
             btnAction.setText("Đăng nhập");
-            etConfirmPassword.setVisibility(View.GONE);
+            layoutConfirmPassword.setVisibility(View.GONE);
             tvToggleHint.setText("Nếu bạn chưa có tài khoản? ");
             tvToggleAction.setText("Đăng ký ngay");
         } else {
             tvTitle.setText("ĐĂNG KÝ");
             btnAction.setText("Đăng ký");
-            etConfirmPassword.setVisibility(View.VISIBLE);
+            layoutConfirmPassword.setVisibility(View.VISIBLE);
             tvToggleHint.setText("Đã có tài khoản? ");
             tvToggleAction.setText("Đăng nhập ngay");
         }

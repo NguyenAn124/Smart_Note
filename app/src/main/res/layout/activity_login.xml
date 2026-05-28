@@ -44,7 +44,7 @@
         android:layout_marginBottom="16dp"
         android:hint="Mật khẩu"
         app:passwordToggleEnabled="true"
-        app:boxBackgroundColor="@color/white"
+        app:passwordToggleTint="@color/accent_purple" app:boxBackgroundColor="@color/white"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -67,7 +67,7 @@
         android:hint="Xác nhận mật khẩu"
         android:visibility="gone"
         app:passwordToggleEnabled="true"
-        app:boxBackgroundColor="@color/white"
+        app:passwordToggleTint="@color/accent_purple" app:boxBackgroundColor="@color/white"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
