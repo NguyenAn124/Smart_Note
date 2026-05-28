@@ -1,71 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:background="@color/white">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp">
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_revert"
-            app:tint="@color/black" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Nhắc nhở"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
-
-    <com.google.android.material.tabs.TabLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:tabIndicatorColor="@color/accent_purple"
-        app:tabSelectedTextColor="@color/accent_purple"
-        app:tabTextColor="@color/text_secondary"
-        app:tabTextAppearance="@android:style/TextAppearance.Small">
-        <com.google.android.material.tabs.TabItem android:text="Sắp tới" />
-        <com.google.android.material.tabs.TabItem android:text="Đã qua" />
-    </com.google.android.material.tabs.TabLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginTop="24dp">
+        android:padding="16dp">
 
-        <!-- Item 1 -->
-        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="16dp">
-            <View android:id="@+id/v1" android:layout_width="10dp" android:layout_height="10dp" android:background="@android:drawable/presence_online" android:layout_centerVertical="true" app:backgroundTint="@color/note_yellow" />
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/v1" android:layout_marginStart="16dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Học Flutter" android:textColor="@color/black" android:textStyle="bold" android:textSize="16sp" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="20/05/2024  15:30" android:textSize="12sp" android:textColor="@color/text_secondary" />
-            </LinearLayout>
-            <ImageView android:layout_width="24dp" android:layout_height="24dp" android:layout_alignParentEnd="true" android:src="@android:drawable/ic_popup_reminder" app:tint="@color/black" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_revert"
+                app:tint="@color/black" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Nhắc nhở"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
         </RelativeLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayoutReminders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:tabIndicatorColor="@color/accent_purple"
+            app:tabSelectedTextColor="@color/accent_purple"
+            app:tabTextColor="@color/text_secondary"
+            app:tabTextAppearance="@android:style/TextAppearance.Small">
+        </com.google.android.material.tabs.TabLayout>
 
-        <!-- Item 2 -->
-        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="16dp">
-            <View android:id="@+id/v2" android:layout_width="10dp" android:layout_height="10dp" android:background="@android:drawable/presence_online" android:layout_centerVertical="true" app:backgroundTint="@color/note_green" />
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/v2" android:layout_marginStart="16dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Meeting dự án" android:textColor="@color/black" android:textStyle="bold" android:textSize="16sp" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="21/05/2024  09:00" android:textSize="12sp" android:textColor="@color/text_secondary" />
-            </LinearLayout>
-            <ImageView android:layout_width="24dp" android:layout_height="24dp" android:layout_alignParentEnd="true" android:src="@android:drawable/ic_popup_reminder" app:tint="@color/black" />
-        </RelativeLayout>
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPagerReminders"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/accent_purple"
+        app:tint="@color/white" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
