@@ -48,9 +48,8 @@ public class FirebaseHelper {
     public Query getNotesQuery() {
         String userId = getCurrentUserId();
         if (userId == null) return null;
-        return notesRef.whereEqualTo("ownerId", userId)
-                       .orderBy("pinned", Query.Direction.DESCENDING)
-                       .orderBy("timestamp", Query.Direction.DESCENDING);
+        // Bỏ orderBy để tránh lỗi yêu cầu Index của Firestore khi mới bắt đầu
+        return notesRef.whereEqualTo("ownerId", userId);
     }
 
     // Category operations
@@ -63,13 +62,12 @@ public class FirebaseHelper {
 
     public void deleteCategory(String categoryId) {
         categoriesRef.document(categoryId).delete();
-        // Optional: Update notes that belong to this category to have no category
     }
 
     public Query getCategoriesQuery() {
         String userId = getCurrentUserId();
         if (userId == null) return null;
-        return categoriesRef.whereEqualTo("ownerId", userId)
-                           .orderBy("name", Query.Direction.ASCENDING);
+        // Bỏ orderBy để tránh lỗi Index
+        return categoriesRef.whereEqualTo("ownerId", userId);
     }
 }

@@ -15,12 +15,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import com.google.firebase.firestore.DocumentSnapshot;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class EditNoteActivity extends AppCompatActivity {
@@ -38,6 +40,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private boolean isChecklist = false;
     private boolean isSavingManual = false; 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+    private List<Category> categoriesFromFirebase = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,8 @@ public class EditNoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_note);
 
         firebaseHelper = new FirebaseHelper();
+        loadCategories();
         
-        // Ánh xạ
         etTitle = findViewById(R.id.et_title);
         etContent = findViewById(R.id.et_content);
         tvCategoryName = findViewById(R.id.tv_category_name);
@@ -64,7 +67,6 @@ public class EditNoteActivity extends AppCompatActivity {
 
         ivBack.setOnClickListener(v -> finish());
         
-        // NẠP DỮ LIỆU CŨ: Khôi phục trạng thái tuyệt đối
         if (getIntent().hasExtra("noteId")) {
             noteId = getIntent().getStringExtra("noteId");
             etTitle.setText(getIntent().getStringExtra("title"));
@@ -79,7 +81,7 @@ public class EditNoteActivity extends AppCompatActivity {
             if (getIntent().hasExtra("reminderTime")) {
                 long timeMillis = getIntent().getLongExtra("reminderTime", 0);
                 if (timeMillis > 0) {
-                    reminderDate = new Date(timeMillis); // Nạp lại vào biến toàn cục
+                    reminderDate = new Date(timeMillis);
                     tvReminderTime.setText(sdf.format(reminderDate));
                     switchReminder.setChecked(true);
                 }
@@ -95,7 +97,6 @@ public class EditNoteActivity extends AppCompatActivity {
             ivDelete.setVisibility(View.GONE);
         }
 
-        // Logic nhấn cả hàng (Mockup)
         layoutCategory.setOnClickListener(v -> showCategoryDialog());
         layoutPin.setOnClickListener(v -> switchPin.setChecked(!switchPin.isChecked()));
         
@@ -106,7 +107,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 switchReminder.setChecked(false);
                 reminderDate = null;
                 tvReminderTime.setText("Chưa đặt");
-                saveNoteToFirebase(); // Cập nhật ngay khi tắt
+                saveNoteToFirebase();
             }
         });
 
@@ -132,6 +133,22 @@ public class EditNoteActivity extends AppCompatActivity {
         });
     }
 
+    private void loadCategories() {
+        if (firebaseHelper.getCategoriesQuery() != null) {
+            firebaseHelper.getCategoriesQuery().addSnapshotListener((value, error) -> {
+                if (value != null) {
+                    categoriesFromFirebase.clear();
+                    for (DocumentSnapshot doc : value.getDocuments()) {
+                        Category category = doc.toObject(Category.class);
+                        if (category != null) {
+                            categoriesFromFirebase.add(category);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     private void showDateTimePicker() {
         Calendar calendar = Calendar.getInstance();
         if (reminderDate != null) calendar.setTime(reminderDate);
@@ -149,8 +166,6 @@ public class EditNoteActivity extends AppCompatActivity {
                 reminderDate = calendar.getTime(); 
                 tvReminderTime.setText(sdf.format(reminderDate));
                 switchReminder.setChecked(true);
-                
-                // Lưu "nóng" để tránh lỗi trôi dữ liệu khi thoát
                 saveNoteToFirebase(); 
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show();
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
@@ -219,7 +234,19 @@ public class EditNoteActivity extends AppCompatActivity {
     }
 
     private void showCategoryDialog() {
-        String[] categories = {"Công việc", "Học tập", "Cá nhân", "Ý tưởng"};
+        List<String> categoryNames = new ArrayList<>();
+        categoryNames.add("Công việc");
+        categoryNames.add("Học tập");
+        categoryNames.add("Cá nhân");
+        categoryNames.add("Ý tưởng");
+        
+        for (Category cat : categoriesFromFirebase) {
+            if (!categoryNames.contains(cat.getName())) {
+                categoryNames.add(cat.getName());
+            }
+        }
+
+        String[] categories = categoryNames.toArray(new String[0]);
         new AlertDialog.Builder(this).setTitle("Chọn danh mục").setItems(categories, (dialog, which) -> {
             selectedCategory = categories[which];
             tvCategoryName.setText(selectedCategory);

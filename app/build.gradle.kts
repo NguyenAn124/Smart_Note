@@ -37,12 +37,16 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.gridlayout)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.play.services.auth)
+
+    // Charts
+    implementation(libs.mp.android.chart)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

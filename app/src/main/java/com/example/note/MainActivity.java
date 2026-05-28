@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -40,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new RemindersFragment();
             } else if (id == R.id.nav_categories) {
                 selectedFragment = new SearchFragment();
+            } else if (id == R.id.nav_stats) {
+                selectedFragment = new StatsFragment();
             }
 
             if (selectedFragment != null) {

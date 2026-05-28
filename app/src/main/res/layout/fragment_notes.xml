@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#F8F9FA">
 
-    <!-- Header chuẩn Mockup -->
+    <!-- Header -->
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -15,6 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
         
         <ImageView
+            android:id="@+id/iv_menu"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_centerVertical="true"
@@ -22,6 +23,7 @@
             app:tint="@color/black" />
 
         <TextView
+            android:id="@+id/tv_title_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -52,7 +54,63 @@
                 android:src="@android:drawable/ic_menu_more"
                 app:tint="@color/black" />
         </LinearLayout>
+
+        <!-- Search Input (Hidden by default) -->
+        <LinearLayout
+            android:id="@+id/layout_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_back_search"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_revert"
+                app:tint="@color/black" />
+
+            <EditText
+                android:id="@+id/et_search_notes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="Tìm kiếm ghi chú..."
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/iv_filter_date"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@android:drawable/ic_menu_today"
+                app:tint="@color/black" />
+        </LinearLayout>
     </RelativeLayout>
+
+    <!-- Filter Chips -->
+    <HorizontalScrollView
+        android:id="@+id/filter_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="8dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header">
+        
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true">
+            <!-- Chips will be added dynamically -->
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 
     <!-- Danh sách lưới so le -->
     <androidx.recyclerview.widget.RecyclerView
@@ -63,7 +121,8 @@
         android:paddingHorizontal="8dp"
         android:paddingBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header" />
+        app:layout_constraintTop_toBottomOf="@id/filter_scroll"
+        app:layout_goneMarginTop="0dp" />
 
     <ProgressBar
         android:id="@+id/pb_loading"
